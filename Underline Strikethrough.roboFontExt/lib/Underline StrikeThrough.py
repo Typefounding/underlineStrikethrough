@@ -52,6 +52,7 @@ class UnderlineStrikethroughPreview(BaseWindowController):
        # apply
        self.w.set = Button((645, -139, 120, 20), "Set values", callback=self.setCallback)
        self.w.applyAll = Button((645, -109, 120, 20), "Apply to all", callback=self.applyAllCallback)
+       self.w.applySingle = Button((645, -79, 120, 20), "Apply to current", callback=self.applySingleCallback)
 
        # set UI
        self.setUI()
@@ -124,6 +125,19 @@ class UnderlineStrikethroughPreview(BaseWindowController):
            font.info.postscriptUnderlinePosition = uP
            font.info.openTypeOS2StrikeoutSize = sT
            font.info.openTypeOS2StrikeoutPosition = sP
+           
+           
+   def applySingleCallback(self, sender):
+       font = self.font
+       uT = self.underlineThickness
+       uP = self.underlinePosition
+       sT = self.strikeThickness
+       sP = self.strikePosition
+
+       font.info.postscriptUnderlineThickness = uT
+       font.info.postscriptUnderlinePosition = uP
+       font.info.openTypeOS2StrikeoutSize = sT
+       font.info.openTypeOS2StrikeoutPosition = sP
 
 
    def strikePosCallback(self, sender):
