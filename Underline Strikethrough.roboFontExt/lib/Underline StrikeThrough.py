@@ -6,6 +6,7 @@ from mojo.events import addObserver, removeObserver
 from mojo.roboFont import AllFonts, CurrentFont
 from mojo.drawingTools import *
 from robofab.interface.all.dialogs import Message
+from defconAppKit.tools.textSplitter import splitText
 
 from lib.UI.integerEditText import NumberEditText
 
@@ -80,9 +81,11 @@ class UnderlineStrikethroughPreview(BaseWindowController):
        self.w.preview.setFont(self.font)
        self.testGlyphs = []
        self.testGlyphs.append(self.font['space'])
-       for c in self.testString:
-           if c in self.font:
-               self.testGlyphs.append(self.font[c])
+      charmap = self.font.getCharacterMapping()
+       self.testGlyphNames = splitText(self.testString, charmap)
+       for gn in self.testGlyphNames:
+           if gn in self.font:
+               self.testGlyphs.append(self.font[gn])
        self.testGlyphs.append(self.font['space'])
        self.w.preview.set(self.testGlyphs)
 
