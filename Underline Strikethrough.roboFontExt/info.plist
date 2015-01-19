@@ -26,9 +26,9 @@
 	<key>name</key>
 	<string>Underline Strikethrough</string>
 	<key>timeStamp</key>
-	<real>1421681311</real>
+	<real>1421681443</real>
 	<key>version</key>
-	<string>1.1</string>
+	<string>1.11</string>
 	<key>repository</key>
 	<string>Typefounding/underlineStrikethrough</string>
 </dict>
