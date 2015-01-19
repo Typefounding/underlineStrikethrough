@@ -31,5 +31,7 @@
 	<string>1.11</string>
 	<key>repository</key>
 	<string>Typefounding/underlineStrikethrough</string>
+	<key>extensionPath</key>
+    	<string>Underline Strikethrough.roboFontExt</string>
 </dict>
 </plist>
