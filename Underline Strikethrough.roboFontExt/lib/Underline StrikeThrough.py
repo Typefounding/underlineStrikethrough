@@ -1,6 +1,5 @@
 from vanilla import *
 from defconAppKit.windows.baseWindow import BaseWindowController
-from defconAppKit.controls.fontList import FontList
 from mojo.UI import MultiLineView
 from mojo.events import addObserver, removeObserver
 from mojo.roboFont import AllFonts, CurrentFont
@@ -10,6 +9,43 @@ from defconAppKit.tools.textSplitter import splitText
 
 from lib.UI.integerEditText import NumberEditText
 
+def listFontNames(fontList):
+    return [fontName(font) for font in fontList]
+
+def fontName(font):
+    familyName = font.info.familyName
+    styleName = font.info.styleName
+    if familyName is None: font.info.familyName = familyName = 'Unnamed Font'
+    if styleName is None: font.info.styleName = styleName = 'Unnamed style'
+    return ' > '.join([familyName, styleName])
+
+class FontList(List):
+
+    def __init__(self, posSize, fontList, callback):
+        fontNames = listFontNames(fontList)
+        super(FontList, self).__init__(posSize, fontNames, allowsMultipleSelection=False,
+            allowsEmptySelection=False, enableDelete=False, selectionCallback=self.updateSelectedFonts)
+        self.fonts = fontList
+        self.selection = None
+        self.callback = callback
+
+    def update(self, fontList=None):
+        if fontList is None: self.fonts = AllFonts()
+        elif fontList is not None: self.fonts = fontList
+        self.set(listFontNames(self.fonts))
+
+    def updateSelectedFonts(self, info):
+        self.selection = info.getSelection()
+        self.callback(self.selection[0])
+
+    def selectedFonts(self):
+        return self.selection
+
+    def select(self, thisFont):
+        for i, font in enumerate(self.fonts):
+            if thisFont == font:
+                self.setSelection([i])
+
 class UnderlineStrikethroughPreview(BaseWindowController):
 
     def __init__(self):
@@ -18,16 +54,19 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
         self.testString = "Hlaetgys"
 
-        # Callbacks get grumpy if the window isn't opened yet. Ask Tal/Frederick if there is a better
-        # way of doing this
-        self.windowOpen = False
+        self.underlineThickness = {}
+        self.underlinePosition = {}
+        self.strikeThickness = {}
+        self.strikePosition = {}
 
+        for font in self.fonts:
+            self.underlineThickness[font.path] = font.info.postscriptUnderlineThickness
+            self.underlinePosition[font.path] = font.info.postscriptUnderlinePosition
+            self.strikeThickness[font.path] = font.info.openTypeOS2StrikeoutSize
+            self.strikePosition[font.path] = font.info.openTypeOS2StrikeoutPosition
 
         # create a window
-        self.w = FloatingWindow((900, 450), "Underline and Strikethrough", minSize=(775, 350))
-
-        # add font list to window
-        self.w.fontList = FontList((10, 10, 250, -10), self.fonts, selectionCallback=self.selectionCallback, allowsMultipleSelection=False, allowsEmptySelection=False, enableDelete=False)
+        self.w = Window((900, 450), "Underline and Strikethrough", minSize=(775, 350))
 
         # add the preview to the window
         self.w.preview = MultiLineView((270, 10, -10, -175), pointSize=100, hasVerticalScroller=False)
@@ -49,6 +88,9 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.w.underPos = NumberEditText((545, -140, 70, 22), callback=self.underPosCallback, allowFloat=False)
         self.w.testText = EditText((277, -72, 143, 22), text=self.testString, callback=self.testTextCallback)
 
+        # add font list to window
+        self.w.fontList = FontList((10, 10, 250, -10), self.fonts, self.updateFont)
+
         # apply
         self.w.set = Button((645, -139, 120, 20), "Set values", callback=self.setCallback)
         self.w.applyAll = Button((645, -109, 120, 20), "Apply to all", callback=self.applyAllCallback)
@@ -65,53 +107,47 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
         # open the window
         self.w.open()
-        self.windowOpen = True
 
 
     def setUI(self):
-        self.underlineThickness = self.font.info.postscriptUnderlineThickness
-        self.underlinePosition = self.font.info.postscriptUnderlinePosition
-        self.strikeThickness = self.font.info.openTypeOS2StrikeoutSize
-        self.strikePosition = self.font.info.openTypeOS2StrikeoutPosition
+        self.w.strike.set(self.strikeThickness[self.font.path])
+        self.w.strikePos.set(self.strikePosition[self.font.path])
+        self.w.under.set(self.underlineThickness[self.font.path])
+        self.w.underPos.set(self.underlinePosition[self.font.path])
 
-        self.w.strike.set(self.strikeThickness)
-        self.w.strikePos.set(self.strikePosition)
-        self.w.under.set(self.underlineThickness)
-        self.w.underPos.set(self.underlinePosition)
-
+        marginGlyph = RGlyph()
+        marginGlyph.width = self.font['space'].width if self.font['space'] is not None else 300
         self.w.preview.setFont(self.font)
         self.testGlyphs = []
-        self.testGlyphs.append(self.font['space'])
+        self.testGlyphs.append(marginGlyph)
         charmap = self.font.getCharacterMapping()
-        self.testGlyphNames = splitText(self.testString, charmap)
-        for gn in self.testGlyphNames:
+
+        testGlyphNames = splitText(self.testString, charmap)
+        for gn in testGlyphNames:
             if gn in self.font:
                 self.testGlyphs.append(self.font[gn])
-        self.testGlyphs.append(self.font['space'])
+        self.testGlyphs.append(marginGlyph)
         self.w.preview.set(self.testGlyphs)
 
     def testTextCallback(self, sender):
         self.testString = sender.get()
         self.setUI()
 
-    def selectionCallback(self, sender):
-        index = sender.getSelection()
-        if len(index) != 0:
-            if self.font != sender[index[0]] and self.windowOpen:
-                self.font = sender[index[0]]
-                self.setUI()
+    def updateFont(self, font):
+        self.font = font
+        self.setUI()
 
 
     def setCallback(self, sender):
-        self.font.info.postscriptUnderlineThickness = self.underlineThickness
-        self.font.info.postscriptUnderlinePosition = self.underlinePosition
-        self.font.info.openTypeOS2StrikeoutSize = self.strikeThickness
-        self.font.info.openTypeOS2StrikeoutPosition = self.strikePosition
+        self.font.info.postscriptUnderlineThickness = self.underlineThickness[self.font.path]
+        self.font.info.postscriptUnderlinePosition = self.underlinePosition[self.font.path]
+        self.font.info.openTypeOS2StrikeoutSize = self.strikeThickness[self.font.path]
+        self.font.info.openTypeOS2StrikeoutPosition = self.strikePosition[self.font.path]
 
     def strikeCallback(self, sender):
         value = sender.get()
         if value != '-':
-            self.strikeThickness = value
+            self.strikeThickness[self.font.path] = value
             self.updateView()
 
     def applyAllCallback(self, sender):
@@ -121,10 +157,10 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         sP = self.strikePosition
 
         for font in self.fonts:
-            font.info.postscriptUnderlineThickness = uT
-            font.info.postscriptUnderlinePosition = uP
-            font.info.openTypeOS2StrikeoutSize = sT
-            font.info.openTypeOS2StrikeoutPosition = sP
+            font.info.postscriptUnderlineThickness = uT[font.path]
+            font.info.postscriptUnderlinePosition = uP[font.path]
+            font.info.openTypeOS2StrikeoutSize = sT[font.path]
+            font.info.openTypeOS2StrikeoutPosition = sP[font.path]
 
 
     def applySingleCallback(self, sender):
@@ -134,28 +170,28 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         sT = self.strikeThickness
         sP = self.strikePosition
 
-        font.info.postscriptUnderlineThickness = uT
-        font.info.postscriptUnderlinePosition = uP
-        font.info.openTypeOS2StrikeoutSize = sT
-        font.info.openTypeOS2StrikeoutPosition = sP
+        font.info.postscriptUnderlineThickness = uT[self.font.path]
+        font.info.postscriptUnderlinePosition = uP[self.font.path]
+        font.info.openTypeOS2StrikeoutSize = sT[self.font.path]
+        font.info.openTypeOS2StrikeoutPosition = sP[self.font.path]
 
 
     def strikePosCallback(self, sender):
         value = sender.get()
         if value != '-':
-            self.strikePosition = value
+            self.strikePosition[self.font.path] = value
             self.updateView()
 
     def underCallback(self, sender):
         value = sender.get()
         if value != '-':
-            self.underlineThickness = value
+            self.underlineThickness[self.font.path] = value
             self.updateView()
 
     def underPosCallback(self, sender):
         value = sender.get()
         if value != '-':
-            self.underlinePosition = value
+            self.underlinePosition[self.font.path] = value
             self.updateView()
 
     def updateView(self):
@@ -164,17 +200,16 @@ class UnderlineStrikethroughPreview(BaseWindowController):
     def windowCloseCallback(self, sender):
         super(UnderlineStrikethroughPreview, self).windowCloseCallback(sender)
         removeObserver(self, "spaceCenterDraw")
-        self.windowOpen = False
 
     def drawLines(self, notification):
         glyph = notification["glyph"]
         if glyph:
-            if self.underlinePosition is not None and self.underlineThickness is not None:
-                underlineY = self.underlinePosition - self.underlineThickness / 2
-                rect(-10, underlineY, glyph.width+20, self.underlineThickness)
-            if self.strikePosition is not None and self.strikeThickness is not None:
-                strikeY = self.strikePosition - self.strikeThickness
-                rect(-10, strikeY, glyph.width+20, self.strikeThickness)
+            if self.underlinePosition[self.font.path] is not None and self.underlineThickness[self.font.path] is not None:
+                underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path] / 2
+                rect(-10, underlineY, glyph.width+20, self.underlineThickness[self.font.path])
+            if self.strikePosition[self.font.path] is not None and self.strikeThickness[self.font.path] is not None:
+                strikeY = self.strikePosition[self.font.path] - self.strikeThickness[self.font.path]
+                rect(-10, strikeY, glyph.width+20, self.strikeThickness[self.font.path])
 
 
 
