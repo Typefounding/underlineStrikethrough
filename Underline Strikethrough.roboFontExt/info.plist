@@ -29,9 +29,10 @@
 	<real>1421681443</real>
 	<key>version</key>
 	<string>1.2</string>
-	<key>repository</key>
-	<string>Typefounding/underlineStrikethrough</string>
-	<key>extensionPath</key>
-	<string>Underline Strikethrough.roboFontExt</string>
+	<key>com.robofontmechanic.Mechanic</key>
+	<dict>
+	  <key>repository</key>
+	  <string>Typefounding/underlineStrikethrough</string>
+	</dict>
 </dict>
 </plist>
