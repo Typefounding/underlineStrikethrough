@@ -34,7 +34,7 @@
 	  <key>repository</key>
 	  <string>Typefounding/underlineStrikethrough</string>
 	  <key>summary</key>
-           <string>Visually sets underline and strikethrough values for font info.</string>
+          <string>Visually sets underline and strikethrough values for font info.</string>
 	</dict>
 </dict>
 </plist>
