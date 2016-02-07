@@ -28,11 +28,13 @@
 	<key>timeStamp</key>
 	<real>1426275160</real>
 	<key>version</key>
-	<string>1.2</string>
+	<string>1.3</string>
 	<key>com.robofontmechanic.Mechanic</key>
 	<dict>
 	  <key>repository</key>
 	  <string>Typefounding/underlineStrikethrough</string>
+	  <key>summary</key>
+           <string>Visually sets underline and strikethrough values for font info.</string>
 	</dict>
 </dict>
 </plist>
