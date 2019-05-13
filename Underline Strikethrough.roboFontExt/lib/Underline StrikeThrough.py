@@ -35,7 +35,7 @@ class FontList(List):
         self.set(listFontNames(self.fonts))
 
     def updateSelectedFonts(self, info):
-        self.selection = info.getSelection()
+        self.selection = [self.fonts[0] for i in info.getSelection()]
         self.callback(self.selection[0])
 
     def selectedFonts(self):
