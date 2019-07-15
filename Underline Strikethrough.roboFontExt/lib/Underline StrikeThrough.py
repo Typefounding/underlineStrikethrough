@@ -91,9 +91,8 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.w.fontList = FontList((10, 10, 250, -10), self.fonts, self.updateFont)
 
         # apply
-        self.w.set = Button((645, -139, 120, 20), "Set values", callback=self.setCallback)
+        self.w.set = Button((645, -139, 120, 20), "Apply to current", callback=self.applySingleCallback)
         self.w.applyAll = Button((645, -109, 120, 20), "Apply to all", callback=self.applyAllCallback)
-        self.w.applySingle = Button((645, -79, 120, 20), "Apply to current", callback=self.applySingleCallback)
 
         # set UI
         self.setUI()
@@ -136,13 +135,6 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.font = font
         self.setUI()
 
-
-    def setCallback(self, sender):
-        self.font.info.postscriptUnderlineThickness = self.underlineThickness[self.font.path]
-        self.font.info.postscriptUnderlinePosition = self.underlinePosition[self.font.path]
-        self.font.info.openTypeOS2StrikeoutSize = self.strikeThickness[self.font.path]
-        self.font.info.openTypeOS2StrikeoutPosition = self.strikePosition[self.font.path]
-
     def strikeCallback(self, sender):
         value = sender.get()
         if value != '-':
@@ -154,12 +146,17 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         uP = self.underlinePosition
         sT = self.strikeThickness
         sP = self.strikePosition
+        cf = self.font
 
         for font in self.fonts:
-            font.info.postscriptUnderlineThickness = uT[font.path]
-            font.info.postscriptUnderlinePosition = uP[font.path]
-            font.info.openTypeOS2StrikeoutSize = sT[font.path]
-            font.info.openTypeOS2StrikeoutPosition = sP[font.path]
+            font.info.postscriptUnderlineThickness = uT[cf.path]
+            uT[font.path] = uT[cf.path]
+            font.info.postscriptUnderlinePosition = uP[cf.path]
+            uP[font.path] = uP[cf.path]
+            font.info.openTypeOS2StrikeoutSize = sT[cf.path]
+            sT[font.path] = sT[cf.path]
+            font.info.openTypeOS2StrikeoutPosition = sP[cf.path]
+            sP[font.path] = sP[cf.path]
 
 
     def applySingleCallback(self, sender):
@@ -169,10 +166,10 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         sT = self.strikeThickness
         sP = self.strikePosition
 
-        font.info.postscriptUnderlineThickness = uT[self.font.path]
-        font.info.postscriptUnderlinePosition = uP[self.font.path]
-        font.info.openTypeOS2StrikeoutSize = sT[self.font.path]
-        font.info.openTypeOS2StrikeoutPosition = sP[self.font.path]
+        font.info.postscriptUnderlineThickness = uT[font.path]
+        font.info.postscriptUnderlinePosition = uP[font.path]
+        font.info.openTypeOS2StrikeoutSize = sT[font.path]
+        font.info.openTypeOS2StrikeoutPosition = sP[font.path]
 
 
     def strikePosCallback(self, sender):
