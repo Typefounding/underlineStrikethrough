@@ -4,7 +4,6 @@ from mojo.UI import MultiLineView
 from mojo.events import addObserver, removeObserver
 from mojo.roboFont import AllFonts, CurrentFont
 from mojo.drawingTools import *
-from robofab.interface.all.dialogs import Message
 from defconAppKit.tools.textSplitter import splitText
 
 from lib.UI.integerEditText import NumberEditText
@@ -35,7 +34,7 @@ class FontList(List):
         self.set(listFontNames(self.fonts))
 
     def updateSelectedFonts(self, info):
-        self.selection = info.getSelection()
+        self.selection = [self.fonts[i] for i in info.getSelection()]
         self.callback(self.selection[0])
 
     def selectedFonts(self):
@@ -204,6 +203,7 @@ class UnderlineStrikethroughPreview(BaseWindowController):
     def drawLines(self, notification):
         glyph = notification["glyph"]
         if glyph:
+            fill(0)
             if self.underlinePosition[self.font.path] is not None and self.underlineThickness[self.font.path] is not None:
                 underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path] / 2
                 rect(-10, underlineY, glyph.width+20, self.underlineThickness[self.font.path])
