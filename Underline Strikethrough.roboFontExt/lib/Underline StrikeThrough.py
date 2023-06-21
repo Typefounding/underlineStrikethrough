@@ -59,9 +59,9 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.strikeThickness = {}
         self.strikePosition = {}
 
-        self.lightColor = getDefault("spaceCenterGlyphColor")
-        self.darkColor = getDefault("spaceCenterGlyphColor.dark")
-        self.lineColor = self.lightColor
+        self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
+        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
+            self.lineColor = getDefault("spaceCenterGlyphColor.dark")  # Dark mode foreground color
 
         for font in self.fonts:
             self.underlineThickness[font.path] = font.info.postscriptUnderlineThickness
@@ -195,9 +195,6 @@ class UnderlineStrikethroughPreview(BaseWindowController):
             self.updateView()
 
     def updateView(self):
-        self.lineColor = self.lightColor  # Light mode by default
-        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
-            self.lineColor = self.darkColor  # Dark mode foreground color
         self.w.preview.contentView().refresh()
 
     def windowCloseCallback(self, sender):
