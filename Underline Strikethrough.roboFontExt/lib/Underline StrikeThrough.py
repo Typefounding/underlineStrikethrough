@@ -160,14 +160,15 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
     def applySingleCallback(self, sender):
         font = self.font
+
         uT = self.underlineThickness
         uP = self.underlinePosition
         sT = self.strikeThickness
         sP = self.strikePosition
 
         font.info.postscriptUnderlineThickness = uT[font.path]
-        font.info.postscriptUnderlinePosition = uP[font.path]
-        font.info.openTypeOS2StrikeoutSize = sT[font.path]
+        font.info.postscriptUnderlinePosition  = uP[font.path]
+        font.info.openTypeOS2StrikeoutSize     = sT[font.path]
         font.info.openTypeOS2StrikeoutPosition = sP[font.path]
 
 
@@ -201,12 +202,11 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         if glyph:
             fill(0)
             if self.underlinePosition[self.font.path] is not None and self.underlineThickness[self.font.path] is not None:
-                underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path] / 2
+                underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path]
                 rect(-10, underlineY, glyph.width+20, self.underlineThickness[self.font.path])
             if self.strikePosition[self.font.path] is not None and self.strikeThickness[self.font.path] is not None:
                 strikeY = self.strikePosition[self.font.path] - self.strikeThickness[self.font.path]
                 rect(-10, strikeY, glyph.width+20, self.strikeThickness[self.font.path])
-
 
 
 OpenWindow(UnderlineStrikethroughPreview)
