@@ -113,18 +113,17 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.w.under.set(self.underlineThickness[self.font.path])
         self.w.underPos.set(self.underlinePosition[self.font.path])
 
-        marginGlyph = RGlyph()
-        marginGlyph.width = self.font['space'].width if self.font['space'] is not None else 300
+        marginGlyph = self.font['space']
         self.w.preview.setFont(self.font)
         self.testGlyphs = []
-        self.testGlyphs.append(marginGlyph)
+        self.testGlyphs.append(self.font['space'])
         charmap = self.font.getCharacterMapping()
 
         testGlyphNames = splitText(self.testString, charmap)
         for gn in testGlyphNames:
             if gn in self.font:
                 self.testGlyphs.append(self.font[gn])
-        self.testGlyphs.append(marginGlyph)
+        self.testGlyphs.append(self.font['space'])
         self.w.preview.set(self.testGlyphs)
 
     def testTextCallback(self, sender):
