@@ -1,6 +1,7 @@
+from AppKit import NSApp, NSAppearance, NSAppearanceNameDarkAqua
 from vanilla import *
 from defconAppKit.windows.baseWindow import BaseWindowController
-from mojo.UI import MultiLineView
+from mojo.UI import MultiLineView, getDefault
 from mojo.events import addObserver, removeObserver
 from mojo.roboFont import AllFonts, CurrentFont
 from mojo.drawingTools import *
@@ -58,6 +59,10 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.strikeThickness = {}
         self.strikePosition = {}
 
+        self.lightColor = getDefault("spaceCenterGlyphColor")
+        self.darkColor = getDefault("spaceCenterGlyphColor.dark")
+        self.lineColor = self.lightColor
+
         for font in self.fonts:
             self.underlineThickness[font.path] = font.info.postscriptUnderlineThickness
             self.underlinePosition[font.path] = font.info.postscriptUnderlinePosition
@@ -105,7 +110,6 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
         # open the window
         self.w.open()
-
 
     def setUI(self):
         self.w.strike.set(self.strikeThickness[self.font.path])
@@ -191,6 +195,9 @@ class UnderlineStrikethroughPreview(BaseWindowController):
             self.updateView()
 
     def updateView(self):
+        self.lineColor = self.lightColor  # Light mode by default
+        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
+            self.lineColor = self.darkColor  # Dark mode foreground color
         self.w.preview.contentView().refresh()
 
     def windowCloseCallback(self, sender):
@@ -200,7 +207,7 @@ class UnderlineStrikethroughPreview(BaseWindowController):
     def drawLines(self, notification):
         glyph = notification["glyph"]
         if glyph:
-            fill(0)
+            fill(*self.lineColor)
             if self.underlinePosition[self.font.path] is not None and self.underlineThickness[self.font.path] is not None:
                 underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path]
                 rect(-10, underlineY, glyph.width+20, self.underlineThickness[self.font.path])
