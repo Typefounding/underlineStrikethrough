@@ -6,8 +6,8 @@ from mojo.events import addObserver, removeObserver
 from mojo.roboFont import AllFonts, CurrentFont
 from mojo.drawingTools import *
 from defconAppKit.tools.textSplitter import splitText
-
 from lib.UI.integerEditText import NumberEditText
+
 
 def listFontNames(fontList):
     return [fontName(font) for font in fontList]
@@ -52,12 +52,16 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.fonts = AllFonts()
         self.font = CurrentFont()
 
+        if not self.font:
+            print("Please open a UFO before using Underline Strikethrough.")
+            return
+
         self.testString = "Hlaetgys"
 
         self.underlineThickness = {}
-        self.underlinePosition = {}
-        self.strikeThickness = {}
-        self.strikePosition = {}
+        self.underlinePosition  = {}
+        self.strikeThickness    = {}
+        self.strikePosition     = {}
 
         self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
         if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
@@ -65,9 +69,9 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
         for font in self.fonts:
             self.underlineThickness[font.path] = font.info.postscriptUnderlineThickness
-            self.underlinePosition[font.path] = font.info.postscriptUnderlinePosition
-            self.strikeThickness[font.path] = font.info.openTypeOS2StrikeoutSize
-            self.strikePosition[font.path] = font.info.openTypeOS2StrikeoutPosition
+            self.underlinePosition[font.path]  = font.info.postscriptUnderlinePosition
+            self.strikeThickness[font.path]    = font.info.openTypeOS2StrikeoutSize
+            self.strikePosition[font.path]     = font.info.openTypeOS2StrikeoutPosition
 
         # create a window
         self.w = Window((900, 450), "Underline and Strikethrough", minSize=(775, 350))
@@ -77,26 +81,26 @@ class UnderlineStrikethroughPreview(BaseWindowController):
 
         # labels
         self.w.textStrikethroughTitle = TextBox((275, -165, -10, 17), "Strikethrough")
-        self.w.textStrikeThickness = TextBox((278, -115, -10, 17), "Thickness", sizeStyle='small')
-        self.w.textStrikePos = TextBox((351, -115, -10, 17), "Position", sizeStyle='small')
-        self.w.textUnderlineTitle = TextBox((470, -165, -10, 17), "Underline")
-        self.w.textUnderThickness = TextBox((473, -115, -10, 17), "Thickness", sizeStyle='small')
-        self.w.textUnderPos = TextBox((546, -115, -10, 17), "Position", sizeStyle='small')
-        self.w.textTestText = TextBox((278, -47, -10, 17), "Testing text", sizeStyle='small')
+        self.w.textStrikeThickness    = TextBox((278, -115, -10, 17), "Thickness", sizeStyle='small')
+        self.w.textStrikePos          = TextBox((351, -115, -10, 17), "Position", sizeStyle='small')
+        self.w.textUnderlineTitle     = TextBox((470, -165, -10, 17), "Underline")
+        self.w.textUnderThickness     = TextBox((473, -115, -10, 17), "Thickness", sizeStyle='small')
+        self.w.textUnderPos           = TextBox((546, -115, -10, 17), "Position", sizeStyle='small')
+        self.w.textTestText           = TextBox((278, -47, -10, 17), "Testing text", sizeStyle='small')
 
         # data
         # NumberEditText defaults: allowFloat=True, allowNegative=True, allowEmpty=True, minimum=None, maximum=None, decimals=2
-        self.w.strike = NumberEditText((277, -140, 70, 22), callback=self.strikeCallback, allowFloat=False, allowNegative=False)
+        self.w.strike    = NumberEditText((277, -140, 70, 22), callback=self.strikeCallback, allowFloat=False, allowNegative=False)
         self.w.strikePos = NumberEditText((350, -140, 70, 22), callback=self.strikePosCallback, allowFloat=False)
-        self.w.under = NumberEditText((472, -140, 70, 22), callback=self.underCallback, allowFloat=False, allowNegative=False)
-        self.w.underPos = NumberEditText((545, -140, 70, 22), callback=self.underPosCallback, allowFloat=False)
-        self.w.testText = EditText((277, -72, 143, 22), text=self.testString, callback=self.testTextCallback)
+        self.w.under     = NumberEditText((472, -140, 70, 22), callback=self.underCallback, allowFloat=False, allowNegative=False)
+        self.w.underPos  = NumberEditText((545, -140, 70, 22), callback=self.underPosCallback, allowFloat=False)
+        self.w.testText  = EditText((277, -72, 143, 22), text=self.testString, callback=self.testTextCallback)
 
         # add font list to window
         self.w.fontList = FontList((10, 10, 250, -10), self.fonts, self.updateFont)
 
         # apply
-        self.w.set = Button((645, -139, 120, 20), "Apply to current", callback=self.applySingleCallback)
+        self.w.set      = Button((645, -139, 120, 20), "Apply to current", callback=self.applySingleCallback)
         self.w.applyAll = Button((645, -109, 120, 20), "Apply to all", callback=self.applyAllCallback)
 
         # set UI
@@ -117,17 +121,13 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         self.w.under.set(self.underlineThickness[self.font.path])
         self.w.underPos.set(self.underlinePosition[self.font.path])
 
-        marginGlyph = self.font['space']
         self.w.preview.setFont(self.font)
         self.testGlyphs = []
-        self.testGlyphs.append(self.font['space'])
         charmap = self.font.getCharacterMapping()
-
         testGlyphNames = splitText(self.testString, charmap)
         for gn in testGlyphNames:
             if gn in self.font:
                 self.testGlyphs.append(self.font[gn])
-        self.testGlyphs.append(self.font['space'])
         self.w.preview.set(self.testGlyphs)
 
     def testTextCallback(self, sender):
@@ -161,7 +161,6 @@ class UnderlineStrikethroughPreview(BaseWindowController):
             font.info.openTypeOS2StrikeoutPosition = sP[cf.path]
             sP[font.path] = sP[cf.path]
 
-
     def applySingleCallback(self, sender):
         font = self.font
 
@@ -174,7 +173,6 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         font.info.postscriptUnderlinePosition  = uP[font.path]
         font.info.openTypeOS2StrikeoutSize     = sT[font.path]
         font.info.openTypeOS2StrikeoutPosition = sP[font.path]
-
 
     def strikePosCallback(self, sender):
         value = sender.get()
