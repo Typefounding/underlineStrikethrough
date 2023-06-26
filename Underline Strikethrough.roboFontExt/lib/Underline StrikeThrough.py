@@ -74,7 +74,7 @@ class UnderlineStrikethroughPreview(BaseWindowController):
             self.strikePosition[font.path]     = font.info.openTypeOS2StrikeoutPosition
 
         # create a window
-        self.w = Window((900, 450), "Underline and Strikethrough", minSize=(775, 350))
+        self.w = Window((900, 450), "Underline Strikethrough", minSize=(775, 350))
 
         # add the preview to the window
         self.w.preview = MultiLineView((270, 10, -10, -175), pointSize=100, hasVerticalScroller=False)
