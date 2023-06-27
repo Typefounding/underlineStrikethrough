@@ -204,7 +204,7 @@ class UnderlineStrikethroughPreview(BaseWindowController):
         if glyph:
             fill(*self.lineColor)
             if self.underlinePosition[self.font.path] is not None and self.underlineThickness[self.font.path] is not None:
-                underlineY = self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path]
+                underlineY = int(self.underlinePosition[self.font.path] - self.underlineThickness[self.font.path] / 2)
                 rect(-10, underlineY, glyph.width+20, self.underlineThickness[self.font.path])
             if self.strikePosition[self.font.path] is not None and self.strikeThickness[self.font.path] is not None:
                 strikeY = self.strikePosition[self.font.path] - self.strikeThickness[self.font.path]
