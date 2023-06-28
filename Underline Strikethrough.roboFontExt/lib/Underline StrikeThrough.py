@@ -63,12 +63,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         >>>> (Mid-Cap-Height)     @stMidCapButton
         >>>> (Mid-X-Height)       @stMidXButton
         
-        >>> ---
-        
-        >>> * VerticalStack
-        >>>> (Copy to All)        @copyAllButton
-        >>>> !- Copied!           @copiedLabel
-        
         ---
         """
         footer="""
@@ -76,11 +70,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         (Set Values)              @setAllButton
         """
         
-        tableWidth = 225
-        titleWidth = 70
-        itemWidth = 140
-        fieldWidth = 40
-        buttonWidth = 130
+        tableWidth  = 225
+        titleWidth  = 70
+        itemWidth   = 120
+        fieldWidth  = 55
         
         descriptionData = dict(
             table=dict(
@@ -96,7 +89,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 width='fill'
             ),
             colorWell=dict(
-                width=50,
+                width=fieldWidth,
             ),
             form1=dict(
                 titleColumnWidth=titleWidth,
@@ -123,23 +116,16 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 valueWidth=fieldWidth,
             ),
             ulDescButton=dict(
-                width=buttonWidth,
+                width=itemWidth,
             ),
             ulBelowDescButton=dict(
-                width=buttonWidth,
+                width=itemWidth,
             ),
             stMidCapButton=dict(
-                width=buttonWidth,
+                width=itemWidth,
             ),
             stMidXButton=dict(
-                width=buttonWidth,
-            ),
-            copyAllButton=dict(
-                width=buttonWidth,
-            ),
-            copiedText=dict(
-                width=buttonWidth,
-                alignment='justified',
+                width=itemWidth,
             ),
             setAllButton=dict(
                 width=tableWidth,
@@ -160,10 +146,9 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.strokeColor = (0,0,0,1)
         self.w.getItem('colorWell').set(self.strokeColor)
         
-        self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         
-        self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hlpxotiys")
+        self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hloxtps")
         self.w.getItem('testText').set(self.testString)
         
         self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
@@ -207,7 +192,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         Updates the font list upon open and when new UFOs 
         are opened/closed while the extension is open.
         '''
-        self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         self.fonts = AllFonts()
         self.fontsList = []
@@ -262,7 +246,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             return ''
             
     def updateTextFields(self):
-        self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         self.w.getItem("ulThicknessText").set(self.getValueIfConsistent(self.selectedFonts, self.underlineThickness))
         self.w.getItem("ulPosText").set(self.getValueIfConsistent(self.selectedFonts, self.underlinePosition))
@@ -279,7 +262,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.selectedFonts = [self.fonts[index] for index in selectedIndexes]
         self.updateTextFields()
         self.updatePreview()
-        self.w.getItem('copiedLabel').show(False)  # Hide the "Copied" text if it's not already.
 
     def ulThicknessTextCallback(self, sender):
         value = sender.get()
@@ -351,8 +333,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         '''
         Updates the Merz View which shows the test string with underline and strikethrough applied.
         '''
-        
-        self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         
         container = self.merzView.getMerzContainer()
@@ -369,7 +349,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     r,g,b,a  = self.strokeColor
                     self.localStrokeColor = r,g,b,0.2
                 baseline = merzH / 2 - 200
-                viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.8
+                viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.75
             
                 cursor = margin
                 for char in self.testString:
@@ -415,24 +395,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             font.info.openTypeOS2StrikeoutSize     = int(sT[font.path])
             font.info.openTypeOS2StrikeoutPosition = int(sP[font.path])
         self.w.getItem('setAllLabel').show(True)
-
-    def copyAllButtonCallback(self, sender):
-        selectedULThicknesses = self.getValueIfConsistent(self.selectedFonts, self.underlineThickness)
-        selectedULPositions   = self.getValueIfConsistent(self.selectedFonts, self.underlinePosition)
-        selectedSTThicknesses = self.getValueIfConsistent(self.selectedFonts, self.strikeThickness)
-        selectedSTPositions   = self.getValueIfConsistent(self.selectedFonts, self.strikePosition)
-
-        for font in self.fonts:
-            # If statements are here, so we don't run into any errors during this operation if multiple UFOs are selected
-            if selectedULThicknesses:
-                self.underlineThickness[font.path] = selectedULThicknesses
-            if selectedULPositions:
-                self.underlinePosition[font.path]  = selectedULPositions
-            if selectedSTThicknesses:
-                self.strikeThickness[font.path]    = selectedSTThicknesses
-            if selectedSTPositions:
-                self.strikePosition[font.path]     = selectedSTPositions
-        self.w.getItem('copiedLabel').show(True)
 
 
 registerRoboFontSubscriber(UnderlineStrikethrough)
