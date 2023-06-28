@@ -2,7 +2,7 @@ from AppKit import NSApp, NSAppearance, NSAppearanceNameDarkAqua
 import ezui
 import merz
 from mojo.subscriber import Subscriber, registerRoboFontSubscriber
-from mojo.UI import getDefault
+from mojo.UI import getDefault, CurrentFontWindow
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from defconAppKit.tools.textSplitter import splitText
 from lib.tools.unicodeTools import GN2UV
@@ -139,8 +139,14 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             descriptionData=descriptionData,
             controller=self,
             size='auto',
-            footer=footer
+            footer=footer,
+            # tabLoops=['ulThicknessText', 'stThicknessText', 'ulPosText', 'stPosText'],  # Doesn't seem to work.
         )
+        
+        # Set the position of the window to relate to the front-most font overview window.
+        fw_x, fw_y, _, _ = CurrentFontWindow().w.getPosSize()
+        _, _, w_w, w_h   = self.w.getPosSize()
+        self.w.setPosSize((fw_x + 50, fw_y + 50, w_w, w_h))
         
         self.merzView = self.w.getItem("merzView")
         
@@ -168,7 +174,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             self.selectedFonts = [self.fonts[0]]
             self.updateFontList()          
             self.updateTextFields()
-            self.updatePreview()
+        self.updatePreview()  
             
     # Change the preview colors if the app switches to dark mode.
     def roboFontAppearanceChanged(self, info):
@@ -224,18 +230,24 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     self.fontsList.append(font.info.familyName + " - " + font.info.styleName)
                 else:
                     self.fontsList.append('Untitled')
-            # Set the font list in the UI
-            self.w.getItem("table").set(self.fontsList)
-            
-            # Select what was selected before
-            fontIndexesToSelect = []
+                    
+        # Set the font list in the UI
+        self.w.getItem("table").set(self.fontsList)
+        
+        # Select what was selected before
+        fontIndexesToSelect = []
+        if len(self.fonts) == 1:  # If there's only one font, select that one.
+            fontIndexesToSelect = [0]
+        else:
             for font in self.selectedFonts:
                 for i, afFont in enumerate(self.fonts):
                     if font == afFont:
                         fontIndexesToSelect.append(i)
-                    
-            self.w.getItem("table").setSelectedIndexes(fontIndexesToSelect)
-            self.updateTextFields()
+        self.selectedFonts = [self.fonts[index] for index in fontIndexesToSelect]
+        self.w.getItem("table").setSelectedIndexes(fontIndexesToSelect)
+        
+        self.updateTextFields()
+        self.updatePreview()
         
     def getValueIfConsistent(self, fonts, dictionary):
         '''
