@@ -34,9 +34,8 @@ Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/post) for
 
 Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/os2) for more guidance on setting these values.
 
-### Other Buttons
-- **Copy to All:** This will take all entered values currently on display and copy those values to all of the fonts listed on the left panel. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
-- **Set Values:** This will take all values entered in the extension and actually write them into all corresponding open UFOs.
+### Set Values
+This will take all values entered in the extension and actually write them into all corresponding open UFOs.
 *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 
 
