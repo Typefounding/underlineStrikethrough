@@ -1,7 +1,7 @@
 from AppKit import NSApp, NSAppearance, NSAppearanceNameDarkAqua
 import ezui
 import merz
-from mojo.subscriber import Subscriber, registerRoboFontSubscriber
+from mojo.subscriber import Subscriber, registerRoboFontSubscriber, getRegisteredSubscriberEvents
 from mojo.UI import getDefault, CurrentFontWindow
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from defconAppKit.tools.textSplitter import splitText
@@ -61,8 +61,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         >>>> [_ _]                @stPosText
         
         >>>> : 
-        >>>> (Mid-Cap-Height)     @stMidCapButton
-        >>>> (Mid-X-Height)       @stMidXButton
+        >>>> (Mid Cap-Height)     @stMidCapButton
+        >>>> (Mid X-Height)       @stMidXButton
         
         ---
         """
@@ -170,7 +170,13 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
     def started(self):
         self.w.open()
+        
+        # Select the first font on open
         self.selectedFonts = []
+        if AllFonts():
+            self.fonts = AllFonts()
+            self.selectedFonts = [self.fonts[0]]
+            
         self.updateFontList()          
         self.updateTextFields()
         self.updatePreview()  
@@ -179,6 +185,15 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def roboFontAppearanceChanged(self, info):
         self.setPreviewColors()
         self.updatePreview()
+        
+    def roboFontDidChangePreferences(self, info):
+        self.setPreviewColors()
+        self.updatePreview()
+        
+    # # Update the font list if you change family name or style name. Doesn't seem to work with current Subscriber.
+    # def fontInfoDidChange(self, info):
+    #     print("fontInfoDidChange", info)
+    #     self.updateFontList() 
         
     def setPreviewColors(self):
         self.bgColor = getDefault("spaceCenterBackgroundColor")
@@ -346,7 +361,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         setExtensionDefault(extensionKey + '.strokeColor', self.strokeColor)
         self.updatePreview()
         
-
     def updatePreview(self):
         '''
         Updates the Merz View which shows the test string with underline and strikethrough applied.

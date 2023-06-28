@@ -4,7 +4,7 @@ Underline Strikethrough
 A RoboFont extension for setting underline and strikethrough values in all open UFO(s).
 
 ## How to Use:
-Select the fonts the values of which you'd like to change in the left panel. Change the values in the bottom right area. To commit to all the values you've put together during the duration of your time in the extension, press "Set Values". *More info below*
+Select the fonts the values of which you'd like to change in the left panel. Change the values in the bottom right area. To commit to all the values you've put together during the duration of your time in the extension, press "Set Values". *More info below:*
 
 ## User Interface:
 
