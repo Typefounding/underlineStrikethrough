@@ -197,6 +197,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.updateFontList()
         
     def updateFontList(self):
+        '''
+        Updates the font list upon open and when new UFOs 
+        are opened/closed while the extension is open.
+        '''
         self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         self.fonts = AllFonts()
@@ -239,7 +243,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def getValueIfConsistent(self, fonts, dictionary):
         '''
         Check whether the fonts selected in list have the same value for any given attribute. 
-        If so, returns that value. If not, return empty.
+        If so, returns that value. If not, return an empty string.
         '''
         if fonts and dictionary:
             value = dictionary[fonts[0].path]
@@ -285,6 +289,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             self.updatePreview()
             
     def ulDescButtonCallback(self, sender):
+        '''Snaps the underline value to bottom-align with the descender.'''
         for font in self.selectedFonts:
             value = font.info.descender + self.underlineThickness[font.path] / 2
             self.underlinePosition[font.path] = value
@@ -292,6 +297,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.updateTextFields()
         
     def ulBelowDescButtonCallback(self, sender):
+        '''Snaps the underline value to an underline thickness distance below the descender.'''
         for font in self.selectedFonts:
             value = font.info.descender - self.underlineThickness[font.path]
             self.underlinePosition[font.path] = value
@@ -313,6 +319,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             self.updatePreview()
             
     def stMidCapButtonCallback(self, sender):
+        '''Snaps the strikethrough value to the middle of the cap-height'''
         for font in self.selectedFonts:
             value = font.info.capHeight / 2 + self.strikeThickness[font.path] / 2
             self.strikePosition[font.path] = value
@@ -320,6 +327,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.updateTextFields()
             
     def stMidXButtonCallback(self, sender):
+        '''Snaps the strikethrough value to the middle of the x-height'''
         for font in self.selectedFonts:
             value = font.info.xHeight / 2 + self.strikeThickness[font.path] / 2
             self.strikePosition[font.path] = value
@@ -333,6 +341,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
 
     def updatePreview(self):
+        '''
+        Updates the Merz View which shows the test string with underline and strikethrough applied.
+        '''
+        
         self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         
@@ -378,10 +390,14 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     strokeWidth=self.strikeThickness[viewFont.path] * viewScale,
                     strokeColor=self.localStrokeColor
                 )
-      
+            
             container.addSublayerScaleTransformation(viewScale, name='scale', center=(0, merzH/2))
         
     def setAllButtonCallback(self, sender):
+        '''
+        Use the tool’s dictionary we've been building, and write those values into the UFO files themselves.
+        Each UFO will have its own corresponding values.
+        '''
         uT = self.underlineThickness
         uP = self.underlinePosition
         sT = self.strikeThickness
@@ -394,11 +410,21 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('setAllLabel').show(True)
 
     def copyAllButtonCallback(self, sender):
+        selectedULThicknesses = self.getValueIfConsistent(self.selectedFonts, self.underlineThickness)
+        selectedULPositions   = self.getValueIfConsistent(self.selectedFonts, self.underlinePosition)
+        selectedSTThicknesses = self.getValueIfConsistent(self.selectedFonts, self.strikeThickness)
+        selectedSTPositions   = self.getValueIfConsistent(self.selectedFonts, self.strikePosition)
+
         for font in self.fonts:
-            self.underlineThickness[font.path] = self.getValueIfConsistent(self.selectedFonts, self.underlineThickness)
-            self.underlinePosition[font.path]  = self.getValueIfConsistent(self.selectedFonts, self.underlinePosition)
-            self.strikeThickness[font.path]    = self.getValueIfConsistent(self.selectedFonts, self.strikeThickness)
-            self.strikePosition[font.path]     = self.getValueIfConsistent(self.selectedFonts, self.strikePosition)
+            # If statements are here, so we don't run into any errors during this operation if multiple UFOs are selected
+            if selectedULThicknesses:
+                self.underlineThickness[font.path] = selectedULThicknesses
+            if selectedULPositions:
+                self.underlinePosition[font.path]  = selectedULPositions
+            if selectedSTThicknesses:
+                self.strikeThickness[font.path]    = selectedSTThicknesses
+            if selectedSTPositions:
+                self.strikePosition[font.path]     = selectedSTPositions
         self.w.getItem('copiedLabel').show(True)
 
 
