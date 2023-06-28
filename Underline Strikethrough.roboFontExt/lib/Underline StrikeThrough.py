@@ -35,23 +35,31 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         >> * HorizontalStack
         
+        >>> Underline:
         >>> * TwoColumnForm       @form1
-        >>>> : Underline:
+        
+        >>>> : Thickness:
         >>>> [_ _]                @ulThicknessText
+        
+        >>>> : Position:
         >>>> [_ _]                @ulPosText
         
-        >>>> : Snap:
+        >>>> : 
         >>>> (Descender)          @ulDescButton
         >>>> (Below Descender)    @ulBelowDescButton
         
         >>> ---
         
+        >>> Strikethrough:
         >>> * TwoColumnForm       @form2
-        >>>> : Strikethrough:
+        
+        >>>> : Thickness:
         >>>> [_ _]                @stThicknessText
+        
+        >>>> : Position:
         >>>> [_ _]                @stPosText
         
-        >>>> : Snap:
+        >>>> : 
         >>>> (Mid-Cap-Height)     @stMidCapButton
         >>>> (Mid-X-Height)       @stMidXButton
         
@@ -68,7 +76,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         (Set Values)              @setAllButton
         """
         
-        titleWidth = 88
+        titleWidth = 75
         itemWidth = 140
         fieldWidth = 40
         buttonWidth = 130
@@ -100,22 +108,18 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             ulThicknessText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
-                trailingText="Thickness",
             ),
             ulPosText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
-                trailingText="Position",
             ),
             stThicknessText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
-                trailingText="Thickness",
             ),
             stPosText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
-                trailingText="Position",
             ),
             ulDescButton=dict(
                 width=buttonWidth,
@@ -157,7 +161,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         
-        self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hlpxtys")
+        self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hlpxotiys")
         self.w.getItem('testText').set(self.testString)
         
         self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
@@ -363,7 +367,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     r,g,b,a  = self.strokeColor
                     self.localStrokeColor = r,g,b,0.2
                 baseline = merzH / 2 - 200
-                viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.75
+                viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.8
             
                 cursor = margin
                 for char in self.testString:
