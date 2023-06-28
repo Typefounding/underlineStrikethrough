@@ -410,10 +410,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         sT = self.strikeThickness
         sP = self.strikePosition
         for font in self.fonts:
-            font.info.postscriptUnderlineThickness = uT[font.path]
-            font.info.postscriptUnderlinePosition  = uP[font.path]
-            font.info.openTypeOS2StrikeoutSize     = sT[font.path]
-            font.info.openTypeOS2StrikeoutPosition = sP[font.path]
+            font.info.postscriptUnderlineThickness = int(uT[font.path])
+            font.info.postscriptUnderlinePosition  = int(uP[font.path])
+            font.info.openTypeOS2StrikeoutSize     = int(sT[font.path])
+            font.info.openTypeOS2StrikeoutPosition = int(sP[font.path])
         self.w.getItem('setAllLabel').show(True)
 
     def copyAllButtonCallback(self, sender):
