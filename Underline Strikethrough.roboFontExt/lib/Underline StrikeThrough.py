@@ -157,7 +157,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         
-        self.testString = "Hlpxtys"
+        self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hlpxtys")
         self.w.getItem('testText').set(self.testString)
         
         self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
@@ -265,6 +265,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
 
     def testTextCallback(self, sender):
         self.testString = sender.get()
+        setExtensionDefault(extensionKey + '.testString', self.testString)
         self.updatePreview()
 
     def tableSelectionCallback(self, sender):

@@ -15,8 +15,8 @@ This lists all currently-open UFOs. This now auto-updates when fonts are opened 
 
 ### Preview Area
 - **Preview:** This will show all fonts selected in the panel to the left, along with their corresponding underlines and strikethroughs.
-- **Preview Text:** This is the text that you would like displayed in the view above. Default is `Hlpxtys`.
-- **Preview Color:** This is the color you would like the underline and strikethrough preview to have.
+- **Preview Text:** This is the text that you would like displayed in the view above. Default is `Hlpxtys`. *The extension will remember your settings for next time.*
+- **Preview Color:** This is the color you would like the underline and strikethrough preview to have. *The extension will remember your settings for next time.*
 
 ### Underline Settings
 - **Thickness:** The thickness of the underline. This corresponds to `font.info.postscriptUnderlineThickness`. 
