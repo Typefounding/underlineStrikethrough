@@ -35,7 +35,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         >> * HorizontalStack
         
-        >>> Underline:
+        >>> !!!!! Underline
         >>> * TwoColumnForm       @form1
         
         >>>> : Thickness:
@@ -50,7 +50,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         >>> ---
         
-        >>> Strikethrough:
+        >>> !!!!! Strikethrough
         >>> * TwoColumnForm       @form2
         
         >>>> : Thickness:
@@ -76,7 +76,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         (Set Values)              @setAllButton
         """
         
-        titleWidth = 75
+        tableWidth = 225
+        titleWidth = 70
         itemWidth = 140
         fieldWidth = 40
         buttonWidth = 130
@@ -84,7 +85,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         descriptionData = dict(
             table=dict(
                 items=[],
-                width=220
+                width=tableWidth
             ),
             merzView=dict(
                 backgroundColor=(1, 1, 1, 1),
@@ -141,7 +142,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 alignment='justified',
             ),
             setAllButton=dict(
-                width=buttonWidth,
+                width=tableWidth,
+                gravity='leading'
             ),
         )
         self.w = ezui.EZWindow(
