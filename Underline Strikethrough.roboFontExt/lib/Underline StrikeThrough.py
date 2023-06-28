@@ -277,7 +277,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def ulDescButtonCallback(self, sender):
         '''Snaps the underline value to bottom-align with the descender.'''
         for font in self.selectedFonts:
-            value = font.info.descender + self.underlineThickness[font.path] / 2
+            value = int(font.info.descender + self.underlineThickness[font.path] / 2)
             self.underlinePosition[font.path] = value
         self.updatePreview()
         self.updateTextFields()
@@ -285,7 +285,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def ulBelowDescButtonCallback(self, sender):
         '''Snaps the underline value to an underline thickness distance below the descender.'''
         for font in self.selectedFonts:
-            value = font.info.descender - self.underlineThickness[font.path]
+            value = int(font.info.descender - self.underlineThickness[font.path] * 1.5)
             self.underlinePosition[font.path] = value
         self.updatePreview()
         self.updateTextFields()
