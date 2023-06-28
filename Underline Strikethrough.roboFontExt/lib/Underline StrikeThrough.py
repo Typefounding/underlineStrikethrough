@@ -226,9 +226,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     
             self.w.getItem("table").setSelectedIndexes(fontIndexesToSelect)
             self.updateTextFields()
-                    
-            print("self.selectedFonts", self.selectedFonts)
-            print("all listed", self.w.getItem("table").get())
         
     def getValueIfConsistent(self, fonts, dictionary):
         '''
