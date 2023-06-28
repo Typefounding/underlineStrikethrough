@@ -190,7 +190,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('copiedLabel').show(False)
         self.w.getItem('setAllLabel').show(False)
         self.fonts = AllFonts()
-        self.fonts_list = []
+        self.fontsList = []
         print(self.selectedFonts)
         if self.fonts:
             
@@ -208,11 +208,11 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 
             for font in self.fonts:
                 if font.info.familyName and font.info.styleName:
-                    self.fonts_list.append(font.info.familyName + " - " + font.info.styleName)
+                    self.fontsList.append(font.info.familyName + " - " + font.info.styleName)
                 else:
-                    self.fonts_list.append('Untitled')
+                    self.fontsList.append('Untitled')
             # Set the font list in the UI
-            self.w.getItem("table").set(self.fonts_list)
+            self.w.getItem("table").set(self.fontsList)
             
             # Select what was selected before
             fontIndexesToSelect = []
