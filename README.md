@@ -30,7 +30,7 @@ Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/post) for
 - **Thickness:** The thickness of the strikethrough line. This corresponds to `font.info.openTypeOS2StrikeoutSize`. 
 - **Position:** The position of the strikethrough line (the top of the line). This corresponds to `font.info.openTypeOS2StrikeoutPosition`. 
 - **Snap to Mid-Cap-Height:** This will snap the strikethrough value of selected fonts to the mid-point between the baseline and `font.info.capHeight`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
-- **Snap to Mid-Cap-Height:** This will snap the strikethrough value of selected fonts to the mid-point between the baseline and `font.info.xHeight`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
+- **Snap to Mid-X-Height:** This will snap the strikethrough value of selected fonts to the mid-point between the baseline and `font.info.xHeight`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 
 Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/os2) for more guidance on setting these values.
 
