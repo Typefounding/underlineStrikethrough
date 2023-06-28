@@ -144,8 +144,11 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         )
         
         # Set the position of the window to relate to the front-most font overview window.
-        fw_x, fw_y, _, _ = CurrentFontWindow().w.getPosSize()
-        _, _, w_w, w_h   = self.w.getPosSize()
+        if CurrentFontWindow():
+            fw_x, fw_y, _, _ = CurrentFontWindow().w.getPosSize()
+        else:
+            fw_x, fw_y = 300, 300
+        _, _, w_w, w_h = self.w.getPosSize()
         self.w.setPosSize((fw_x + 50, fw_y + 50, w_w, w_h))
         
         self.merzView = self.w.getItem("merzView")
@@ -167,13 +170,9 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
     def started(self):
         self.w.open()
-        
-        self.fonts = AllFonts()
         self.selectedFonts = []
-        if self.fonts:
-            self.selectedFonts = [self.fonts[0]]
-            self.updateFontList()          
-            self.updateTextFields()
+        self.updateFontList()          
+        self.updateTextFields()
         self.updatePreview()  
             
     # Change the preview colors if the app switches to dark mode.
@@ -213,7 +212,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.fontsList = []
         
         if self.fonts:
-            # Update internal account of data when new font is added            
+            # Update internal account of data when new font is opened/closed            
             for font in self.fonts:
                 dictionaryToValue = [
                     (self.underlineThickness , font.info.postscriptUnderlineThickness),
