@@ -39,4 +39,5 @@ This will take all values entered in the extension and actually write them into 
 *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 
 
-
+#### Authors
+Started by Ben Kiel in 2014. Ryan Bugden (@ryanbugden) did a bunch of work updating and improving it in 2023.
