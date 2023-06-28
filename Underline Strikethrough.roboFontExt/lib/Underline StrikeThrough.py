@@ -15,6 +15,7 @@ def getKey(val, di):
             
 extensionKey = 'com.typefounding.underlineStrikethrough'
 
+
 class UnderlineStrikethrough(Subscriber, ezui.WindowController):
 
     def build(self):
@@ -143,17 +144,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         self.merzView = self.w.getItem("merzView")
         
-        self.strokeColor = (0,0,0,1)
-        self.w.getItem('colorWell').set(self.strokeColor)
-        
         self.w.getItem('setAllLabel').show(False)
         
         self.testString = getExtensionDefault(extensionKey + '.testString', fallback="Hloxtps")
         self.w.getItem('testText').set(self.testString)
-        
-        self.lineColor = getDefault("spaceCenterGlyphColor") # Light mode by default
-        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
-            self.lineColor = getDefault("spaceCenterGlyphColor.dark")  # Dark mode foreground color
             
         self.underlineThickness = {}
         self.underlinePosition  = {}
@@ -162,6 +156,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         self.strokeColor = getExtensionDefault(extensionKey + '.strokeColor', fallback=(0,0,0,1))
         self.w.getItem('colorWell').set(self.strokeColor)
+        
+        self.setPreviewColors()
         
     def started(self):
         self.w.open()
@@ -173,6 +169,20 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             self.updateFontList()          
             self.updateTextFields()
             self.updatePreview()
+            
+    # Change the preview colors if the app switches to dark mode.
+    def roboFontAppearanceChanged(self, info):
+        self.setPreviewColors()
+        self.updatePreview()
+        
+    def setPreviewColors(self):
+        self.bgColor = getDefault("spaceCenterBackgroundColor")
+        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
+            self.bgColor = getDefault("spaceCenterBackgroundColor.dark")
+        
+        self.fgColor = getDefault("spaceCenterGlyphColor")
+        if NSApp().appearance() == NSAppearance.appearanceNamed_(NSAppearanceNameDarkAqua):
+            self.fgColor = getDefault("spaceCenterGlyphColor.dark")
         
     def destroy(self):
         self.selectedFonts = []
@@ -333,18 +343,20 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('setAllLabel').show(False)
         
         container = self.merzView.getMerzContainer()
+        container.setBackgroundColor(self.bgColor)
         container.clearSublayers()
         merzW, merzH = container.getSize()
         margin = 300
         
         if self.selectedFonts:
             for viewFont in self.selectedFonts:
-                self.localFillColor   = (0,0,0,1)
+                self.localFGColor   = self.fgColor
                 self.localStrokeColor = self.strokeColor
                 if viewFont != self.selectedFonts[0]:
-                    self.localFillColor = (0,0,0,0.2)
-                    r,g,b,a  = self.strokeColor
-                    self.localStrokeColor = r,g,b,0.2
+                    r, g, b, a = self.localFGColor
+                    self.localFGColor   = r, g, b, 0.25
+                    r, g, b, a = self.strokeColor
+                    self.localStrokeColor = r, g, b, 0.25
                 baseline = merzH / 2 - 200
                 viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.75
             
@@ -352,7 +364,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 for char in self.testString:
                     glyphLayer = container.appendPathSublayer(
                         position=(cursor, baseline),
-                        fillColor=self.localFillColor,
+                        fillColor=self.localFGColor,
                     )
                     gName = getKey(ord(char), GN2UV)
                     glyph = viewFont[gName]
