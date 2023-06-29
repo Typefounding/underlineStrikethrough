@@ -26,6 +26,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         > |     |
         > |-----|
         
+        > ---
+        
         > * VerticalStack
         
         >> * MerzView             @merzView
@@ -45,7 +47,11 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         >>>> * TwoColumnForm       @underlineForm
         
         >>>>> : Thickness:
-        >>>>> [_ _]                @ulThicknessText
+        >>>>> * HorizontalStack
+        >>>>>> [_ _]               @ulThicknessText
+        >>>>>> (Sync)              @syncThickULButton               
+            
+        >>>>> ---   
         
         >>>>> : Position:
         >>>>> [_ _]                @ulPosText
@@ -54,14 +60,18 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         >>> ---
         
-        >>> !!!!! Strikethrough   @stLabel
+        >>> !!!!! Strikethrough    @stLabel
         
         >>> * VerticalStack
         
         >>>> * TwoColumnForm       @strikeForm
         
         >>>>> : Thickness:
-        >>>>> [_ _]                @stThicknessText
+        >>>>> * HorizontalStack
+        >>>>>> [_ _]               @stThicknessText
+        >>>>>> (Sync)              @syncThickSTButton     
+        
+        >>>>> ---  
         
         >>>>> : Position:
         >>>>> [_ _]                @stPosText
@@ -77,10 +87,11 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         tableWidth  = 225
         fieldWidth  = 55
-        headerWidth = 100
-        buttonWidth = 120
+        headerWidth = 120
+        buttonWidth = 118
         titleWidth  = 70
         itemWidth   = buttonWidth
+        syncWidth   = fieldWidth
         
         
         descriptionData = dict(
@@ -104,10 +115,18 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             ulThicknessText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
+                # valueIncrement=1
             ),
             ulPosText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
+                # valueIncrement=1
+            ),            
+            syncThickSTButton=dict(
+                width = syncWidth,
+            ),
+            syncThickULButton=dict(
+                width = syncWidth,
             ),
             underlineForm=dict(
                 titleColumnWidth=titleWidth,
@@ -120,10 +139,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             stThicknessText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
+                # valueIncrement=1
             ),
             stPosText=dict(
                 valueType='integer',
                 valueWidth=fieldWidth,
+                # valueIncrement=1
             ),
             ulLabel=dict(
                 width=headerWidth
@@ -154,7 +175,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             descriptionData=descriptionData,
             controller=self,
             size='auto',
-            maxSize=(4000,579),
             footer=footer,
             # tabLoops=['ulThicknessText', 'stThicknessText', 'ulPosText', 'stPosText'],  # Doesn't seem to work.
         )
@@ -183,6 +203,14 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('colorWell').set(self.strokeColor)
         
         self.setPreviewColors()
+        
+    def acceptsFirstResponder(self, sender):
+        return True
+        
+    # def magnifyWithEvent(self, sender, event):
+    #     print("magnifying...")
+    #     print(event)
+    #     # self.container.setContainerScale(scale)
         
     def started(self):
         self.w.open()
@@ -217,6 +245,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
     def destroy(self):
         self.selectedFonts = []
+        
+    def clearInternalDictionary(self):
         self.underlineThickness = {}
         self.underlinePosition  = {}
         self.strikeThickness    = {}
@@ -262,6 +292,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('setAllLabel').show(False)
         self.fonts = AllFonts()
         self.fontsList = []
+        self.clearInternalDictionary()  # Leave behind any old "identifiers"
         
         if self.fonts:
             for font in self.fonts:
@@ -343,6 +374,17 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 fontIdentifier = self.getFontIdentifier(font)
                 self.underlineThickness[fontIdentifier] = value
             self.updatePreview()
+            
+    def syncThickULButtonCallback(self, sender):
+        '''Matches strikethrough thickness value'''
+        value = self.w.getItem('stThicknessText').get()
+        if value:
+            value = int(value)
+            self.w.getItem('ulThicknessText').set(value)
+            for font in self.selectedFonts:
+                fontIdentifier = self.getFontIdentifier(font)
+                self.underlineThickness[fontIdentifier] = value
+            self.updatePreview()
 
     def ulPosTextCallback(self, sender):
         value = sender.get()
@@ -377,6 +419,17 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def stThicknessTextCallback(self, sender):
         value = sender.get()
         if value != '-':
+            for font in self.selectedFonts:
+                fontIdentifier = self.getFontIdentifier(font)
+                self.strikeThickness[fontIdentifier] = value
+            self.updatePreview()
+            
+    def syncThickSTButtonCallback(self, sender):
+        '''Matches underline thickness value'''
+        value = self.w.getItem('ulThicknessText').get()
+        if value:
+            value = int(value)
+            self.w.getItem('stThicknessText').set(value)
             for font in self.selectedFonts:
                 fontIdentifier = self.getFontIdentifier(font)
                 self.strikeThickness[fontIdentifier] = value
@@ -421,10 +474,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         '''Updates the Merz View which shows the test string with underline and strikethrough applied.'''
         self.w.getItem('setAllLabel').show(False)
         
-        container = self.merzView.getMerzContainer()
-        container.setBackgroundColor(self.bgColor)
-        container.clearSublayers()
-        merzW, merzH = container.getSize()
+        self.container = self.merzView.getMerzContainer()
+        self.container.setBackgroundColor(self.bgColor)
+        self.container.clearSublayers()
+        merzW, merzH = self.container.getSize()
         margin = 300
 
         if self.selectedFonts:
@@ -443,7 +496,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 
                 cursor = margin
                 for char in self.testString:
-                    glyphLayer = container.appendPathSublayer(
+                    glyphLayer = self.container.appendPathSublayer(
                         position=(cursor, baseline),
                         fillColor=self.localFGColor,
                     )
@@ -455,7 +508,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     cursor += glyph.width
                 
                 if self.underlinePosition[fontIdentifier] and self.underlineThickness[fontIdentifier]:
-                    underlineLine = container.appendLineSublayer(
+                    underlineLine = self.container.appendLineSublayer(
                         startPoint=(margin, baseline + self.underlinePosition[fontIdentifier]),
                         endPoint=(cursor, baseline + self.underlinePosition[fontIdentifier]),
                         strokeWidth=self.underlineThickness[fontIdentifier] * viewScale,
@@ -463,14 +516,14 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     )
                 
                 if self.strikePosition[fontIdentifier] and self.strikeThickness[fontIdentifier]:
-                    strikethroughLine = container.appendLineSublayer(
+                    strikethroughLine = self.container.appendLineSublayer(
                         startPoint=(margin, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
                         endPoint=(cursor, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
                         strokeWidth=self.strikeThickness[fontIdentifier] * viewScale,
                         strokeColor=self.localStrokeColor
                     )
         
-            container.addSublayerScaleTransformation(viewScale, name='scale', center=(0, merzH/2))
+            self.container.addSublayerScaleTransformation(viewScale, name='scale', center=(0, merzH/2))
             
     def roundInteger(self, value):
         '''Same as int(), but accepts None.'''
