@@ -22,7 +22,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def build(self):
         content = """
         * HorizontalStack  
-        > |-----|                 @table
+        > |-----|                  @table
         > |     |
         > |-----|
         
@@ -30,17 +30,17 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         
         > * VerticalStack
         
-        >> * MerzView             @merzView
+        >> * MerzView              @merzView
         
-        >> * HorizontalStack      @textArea
-        >>> [_ _]                 @testText
-        >>> * ColorWell           @colorWell
+        >> * HorizontalStack       @textArea
+        >>> [_ _]                  @testText
+        >>> * ColorWell            @colorWell
         
         >> ---
         
         >> * HorizontalStack
         
-        >>> !!!!! Underline       @ulLabel
+        >>> !!!!! Underline        @ulLabel
         
         >>> * VerticalStack
         
@@ -82,7 +82,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         """
         footer="""
         !- All values have been written into their respective UFOs.  @setAllLabel 
-        (Set Values)              @setAllButton
+        (Set Values)               @setAllButton
         """
         
         tableWidth  = 225
@@ -275,13 +275,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         return identifier
         
     def getFontDisplayName(self, font):
-        needsSave = " (Needs Save)"
         if font.info.familyName and font.info.styleName:
             displayName = font.info.familyName + " - " + font.info.styleName
         else:
             displayName = font.fontWindow().w.getNSWindow().title()
-        if not font.path:
-            displayName += needsSave
         return displayName
         
     def updateFontList(self):
