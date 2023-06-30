@@ -6,7 +6,6 @@ from mojo.UI import getDefault, CurrentFontWindow
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from defconAppKit.tools.textSplitter import splitText
 from lib.tools.unicodeTools import GN2UV
-import time
 
 
 def getKey(val, di): 
