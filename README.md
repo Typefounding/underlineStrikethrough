@@ -41,6 +41,3 @@ This will take all values entered in the extension and actually write them into 
 #### Authors
 Started by Ben Kiel in 2014. Ryan Bugden ([@ryanbugden](https://github.com/ryanbugden)) did a bunch of work updating and improving it in 2023.
 
-
-#### Authors
-Started by Ben Kiel in 2014. Ryan Bugden (@ryanbugden) did a bunch of work updating and improving it in 2023.
