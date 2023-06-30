@@ -19,7 +19,7 @@ This lists all currently-open UFOs. This now auto-updates when fonts are opened 
 - **Preview Color:** This is the color you would like the underline and strikethrough preview to have. *The extension will remember your settings for next time.*
 
 ### Underline Settings
-- **Thickness:** The thickness of the underline. This corresponds to `font.info.postscriptUnderlineThickness`. 
+- **Thickness:** The thickness of the underline. This corresponds to `font.info.postscriptUnderlineThickness`. Click "Sync" to set it to match the strikethrough thickness.
 - **Position:** The position of the underline (the top of the line). This corresponds to `font.info.postscriptUnderlinePosition`. 
 - **Snap to Descender:** This will snap the descender value  of selected fonts to bottom-align with `font.info.descender`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 - **Snap to Below Descender:** This will snap the descender value of selected fonts to an underline-thickness-distance below `font.info.descender`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
@@ -27,7 +27,7 @@ This lists all currently-open UFOs. This now auto-updates when fonts are opened 
 Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/post) for more guidance on setting these values.
 
 ### Strikethrough Settings
-- **Thickness:** The thickness of the strikethrough line. This corresponds to `font.info.openTypeOS2StrikeoutSize`. 
+- **Thickness:** The thickness of the strikethrough line. This corresponds to `font.info.openTypeOS2StrikeoutSize`. Click "Sync" to set it to match the underline thickness.
 - **Position:** The position of the strikethrough line (the top of the line). This corresponds to `font.info.openTypeOS2StrikeoutPosition`. 
 - **Snap to Mid-Cap-Height:** This will snap the strikethrough value of selected fonts to the mid-point between the baseline and `font.info.capHeight`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 - **Snap to Mid-X-Height:** This will snap the strikethrough value of selected fonts to the mid-point between the baseline and `font.info.xHeight`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
@@ -37,6 +37,9 @@ Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/os2) for 
 ### Set Values
 This will take all values entered in the extension and actually write them into all corresponding open UFOs.
 *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
+
+#### Authors
+Started by Ben Kiel in 2014. Ryan Bugden ([@ryanbugden](https://github.com/ryanbugden)) did a bunch of work updating and improving it in 2023.
 
 
 #### Authors
