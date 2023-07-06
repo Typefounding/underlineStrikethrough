@@ -8,7 +8,7 @@ Select the fonts the values of which you'd like to change in the left panel. Cha
 
 ## User Interface:
 
-<img src="./_images/user_interface.png">
+<img src="./_images/userInterface.png">
 
 ### List of UFOs
 This lists all currently-open UFOs. This now auto-updates when fonts are opened or closed.
