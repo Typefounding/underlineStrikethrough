@@ -6,6 +6,7 @@ from mojo.UI import getDefault, CurrentFontWindow
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from defconAppKit.tools.textSplitter import splitText
 from lib.tools.unicodeTools import GN2UV
+from fontTools.misc import otRound
 
 
 def getKey(val, di): 
@@ -194,7 +195,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.w.getItem('testText').set(self.testString)
             
         self.underlineThickness = {}
-        self.underlinePosition  = {}
+        self.underlinePosition  = {} # The top of the underline
         self.strikeThickness    = {}
         self.strikePosition     = {}
         
@@ -299,7 +300,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 # Update internal account of data when new font is opened/closed  
                 dictionaryToValue = [
                     (self.underlineThickness , font.info.postscriptUnderlineThickness),
-                    (self.underlinePosition  , font.info.postscriptUnderlinePosition),
                     (self.strikeThickness    , font.info.openTypeOS2StrikeoutSize),
                     (self.strikePosition     , font.info.openTypeOS2StrikeoutPosition)
                     ]
@@ -310,7 +310,19 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                             dictionary.update({fontIdentifier: value})
                         else:
                             dictionary.update({fontIdentifier: None})
-                        
+                # Deal with underline position
+                if 'public.openTypePostUnderlinePosition' in font.lib.keys():
+                    self.underlinePosition.update{fontIdentifier: font.lib['public.openTypePostUnderlinePosition'}
+                # If font doesn't have that lib key set, but is using fontmake, use fontmake behavior
+                elif font.lib["com.robofont.fontCompilerTool"] == 'fontmake':
+                    self.underlinePosition.update{fontIdentifier: font.info.postscriptUnderlineThickness}
+                # If not that, do the math to get position
+                elif font.info.postscriptUnderlinePosition and font.info.postscriptUnderlineThickness:
+                    ul = font.info.postscriptUnderlinePosition + font.info.postscriptUnderlineThickness / 2
+                    self.underlinePosition.update{fontIdentifier: ul}
+                # If no position or thickness, value is None
+                else:
+                    self.underlinePosition.update{fontIdentifier: None}
         # Set the font list in the UI
         self.w.getItem("table").set(self.fontsList)
         
@@ -396,7 +408,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             fontIdentifier = self.getFontIdentifier(font)
             value = None
             if self.underlineThickness[fontIdentifier]:
-                value = int(font.info.descender + self.underlineThickness[fontIdentifier] / 2)
+                value = int(font.info.descender + self.underlineThickness[fontIdentifier])
             self.underlinePosition[fontIdentifier] = value
         self.updatePreview()
         self.updateTextFields()
@@ -407,7 +419,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             fontIdentifier = self.getFontIdentifier(font)
             value = None
             if self.underlineThickness[fontIdentifier]:
-                value = int(font.info.descender - self.underlineThickness[fontIdentifier] * 1.5)
+                value = int(font.info.descender - self.underlineThickness[fontIdentifier])
             self.underlinePosition[fontIdentifier] = value
         self.updatePreview()
         self.updateTextFields()
@@ -505,8 +517,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 
                 if self.underlinePosition[fontIdentifier] and self.underlineThickness[fontIdentifier]:
                     underlineLine = self.container.appendLineSublayer(
-                        startPoint=(margin, baseline + self.underlinePosition[fontIdentifier]),
-                        endPoint=(cursor, baseline + self.underlinePosition[fontIdentifier]),
+                        startPoint=(margin, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
+                        endPoint=(cursor, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
                         strokeWidth=self.underlineThickness[fontIdentifier] * viewScale,
                         strokeColor=self.localStrokeColor
                     )
@@ -525,8 +537,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         '''Same as int(), but accepts None.'''
         if value == None:
             return None
-        return int(value)
-        
+        return otRound(value)
+
     def setAllButtonCallback(self, sender):
         '''
         Uses the tool’s dictionary we've been building, and writes those values into the UFO files themselves.
@@ -539,7 +551,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         for font in self.fonts:
             fontIdentifier = self.getFontIdentifier(font)
             font.info.postscriptUnderlineThickness = self.roundInteger(uT[fontIdentifier])
-            font.info.postscriptUnderlinePosition  = self.roundInteger(uP[fontIdentifier])
+            # Math only works if there is a underline thickness
+            if uT[fontIdentifier]:
+                font.info.postscriptUnderlinePosition  = self.roundInteger(uP[fontIdentifier] - uT[fontIdentifier] / 2)
+            else:
+                font.info.postscriptUnderlinePosition = None
+            font.lib['public.openTypePostUnderlinePosition'] = self.roundInteger(uP[fontIdentifier])
             font.info.openTypeOS2StrikeoutSize     = self.roundInteger(sT[fontIdentifier])
             font.info.openTypeOS2StrikeoutPosition = self.roundInteger(sP[fontIdentifier])
         self.w.getItem('setAllLabel').show(True)
