@@ -5,7 +5,7 @@ from mojo.subscriber import Subscriber, registerRoboFontSubscriber
 from mojo.UI import getDefault, CurrentFontWindow
 from mojo.extensions import getExtensionDefault, setExtensionDefault
 from lib.tools.unicodeTools import GN2UV
-from fontTools.misc import otRound
+from fontTools.misc.roundTools import otRound
 
 
 def getKey(val, di):
