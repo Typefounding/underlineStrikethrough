@@ -175,7 +175,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             controller=self,
             size="auto",
             footer=footer,
-            # tabLoops=["ulThicknessText", "stThicknessText", "ulPosText", "stPosText"],  # Doesn"t seem to work.
+            # tabLoops=["ulThicknessText", "stThicknessText", "ulPosText", "stPosText"],  # Doesn't seem to work.
         )
 
         # Set the position of the window to relate to the front-most font overview window.
@@ -257,7 +257,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def fontDocumentDidOpenNew(self, info):
         self.updateFontList()
 
-    # Doesn"t seem to work as intended without a delay.
+    # Doesn't seem to work as intended without a delay.
     fontDocumentDidSaveDelay = 1
 
     def fontDocumentDidSave(self, info):
@@ -267,7 +267,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         self.updateFontList()
 
     def getFontIdentifier(self, font):
-        # Try to keep track of the font using its path, but if it doesn"t have a path (not saved yet)...
+        # Try to keep track of the font using its path, but if it doesn't have a path (not saved yet)...
         if font.path:
             identifier = font.path
         # Use the title on its window.
@@ -314,7 +314,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                 # Deal with underline position
                 if "public.openTypePostUnderlinePosition" in font.lib:
                     self.underlinePosition.update({fontIdentifier: font.lib["public.openTypePostUnderlinePosition"]})
-                # If font doesn"t have that lib key set, but is using fontmake, use fontmake behavior
+                # If font doesn't have that lib key set, but is using fontmake, use fontmake behavior
                 elif getDefault("fontCompilerTool") == "fontmake":
                     self.underlinePosition.update({fontIdentifier: font.info.postscriptUnderlinePosition})
                 # If not that, do the math to get position
