@@ -20,9 +20,11 @@ This lists all currently-open UFOs. This now auto-updates when fonts are opened 
 
 ### Underline Settings
 - **Thickness:** The thickness of the underline. This corresponds to `font.info.postscriptUnderlineThickness`. Click "Sync" to set it to match the strikethrough thickness.
-- **Position:** The position of the underline (the top of the line). This corresponds to `font.info.postscriptUnderlinePosition`. 
+- **Position:** The position of the underline (the top of the line). 
 - **Snap to Descender:** This will snap the descender value  of selected fonts to bottom-align with `font.info.descender`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
 - **Snap to Below Descender:** This will snap the descender value of selected fonts to an underline-thickness-distance below `font.info.descender`. *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
+
+The underline position will be written into your UFOs using the `font.lib` key `public.openTypePostUnderlinePosition` (this is the value you set in **Position**) and to the `font.info.postscriptUnderlinePosition`. The extension calculates the value for `font.info.postscriptUnderlinePosition` (lowering the underline position by half of the underline thickness).
 
 Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/post) for more guidance on setting these values.
 
