@@ -4,7 +4,6 @@ import merz
 from mojo.subscriber import Subscriber, registerRoboFontSubscriber
 from mojo.UI import getDefault, CurrentFontWindow, splitText
 from mojo.extensions import getExtensionDefault, setExtensionDefault
-from lib.tools.unicodeTools import GN2UV
 from fontTools.misc.roundTools import otRound
 
 
@@ -520,7 +519,6 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                         position=(cursor, baseline),
                         fillColor=self.localFGColor,
                     )
-                    # gName = getKey(ord(char), GN2UV)
                     glyph = viewFont[gName]
                     glyphPath = glyph.getRepresentation("merz.CGPath")
 
