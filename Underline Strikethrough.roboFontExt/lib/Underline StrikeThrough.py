@@ -493,11 +493,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         margin = 300
 
         if self.selectedFonts:
+            biggestUPM = max([viewFont.info.unitsPerEm for viewFont in self.selectedFonts])
+            viewScale = merzH / (biggestUPM + margin*2) * 0.75
             for viewFont in self.selectedFonts:
                 fontIdentifier = self.getFontIdentifier(viewFont)
                 baseline = merzH / 2 - 200
-                viewScale = merzH / (viewFont.info.unitsPerEm + margin*2) * 0.75
-
+                
                 self.localFGColor   = self.fgColor
                 self.localStrokeColor = self.strokeColor
                 if viewFont != self.selectedFonts[0]:
