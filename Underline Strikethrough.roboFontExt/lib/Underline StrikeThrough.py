@@ -7,12 +7,6 @@ from mojo.extensions import getExtensionDefault, setExtensionDefault
 from fontTools.misc.roundTools import otRound
 
 
-def getKey(val, di):
-    for key, value in di.items():
-        if val == value:
-            return key
-
-
 extensionKey = "com.typefounding.underlineStrikethrough"
 
 
