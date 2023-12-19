@@ -15,9 +15,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
     def build(self):
         content = """
         * HorizontalStack
-        > |-----|                  @table
-        > |     |
-        > |-----|
+        
+        > * VerticalStack
+        >> |-----|                  @table
+        >> |     |
+        >> |-----|
+        >> (Apply Current Values to All)  @applyToAllButton
 
         > ---
 
@@ -74,8 +77,8 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         ---
         """
         footer = """
-        !- All values have been written into their respective UFOs.  @setAllLabel 
-        (Set Values)               @setAllButton
+        !- All values have been written into their respective UFOs.  @writeAllLabel 
+        (Write All Values)               @writeAllButton
         """
 
         tableWidth  = 225
@@ -107,12 +110,15 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             ulThicknessText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             ulPosText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
+            ),
+            applyToAllButton=dict(
+                width=tableWidth,
             ),
             syncThickSTButton=dict(
                 width = syncWidth,
@@ -131,12 +137,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             stThicknessText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             stPosText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             ulLabel=dict(
                 width=headerWidth
@@ -156,7 +162,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             stMidXButton=dict(
                 width=buttonWidth,
             ),
-            setAllButton=dict(
+            writeAllButton=dict(
                 width=tableWidth,
                 gravity="leading"
             ),
@@ -181,7 +187,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
 
         self.merzView = self.w.getItem("merzView")
 
-        self.w.getItem("setAllLabel").show(False)
+        self.w.getItem("writeAllLabel").show(False)
 
         self.testString = getExtensionDefault(extensionKey + ".testString", fallback="Hloxtps")
         self.w.getItem("testText").set(self.testString)
@@ -280,7 +286,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         Updates the font list upon open and when new UFOs 
         are opened/closed while the extension is open.
         """
-        self.w.getItem("setAllLabel").show(False)
+        self.w.getItem("writeAllLabel").show(False)
         self.fonts = AllFonts()
         self.fontsList = []
         self.clearInternalDictionary()  # Leave behind any old "identifiers"
@@ -356,7 +362,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             return ""
 
     def updateTextFields(self):
-        self.w.getItem("setAllLabel").show(False)
+        self.w.getItem("writeAllLabel").show(False)
         self.w.getItem("ulThicknessText").set(self.getValueIfConsistent(self.selectedFonts, self.underlineThickness))
         self.w.getItem("ulPosText").set(self.getValueIfConsistent(self.selectedFonts, self.underlinePosition))
         self.w.getItem("stThicknessText").set(self.getValueIfConsistent(self.selectedFonts, self.strikeThickness))
@@ -478,7 +484,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
 
     def updatePreview(self):
         """Updates the Merz View which shows the test string with underline and strikethrough applied."""
-        self.w.getItem("setAllLabel").show(False)
+        self.w.getItem("writeAllLabel").show(False)
 
         self.container = self.merzView.getMerzContainer()
         self.container.setBackgroundColor(self.bgColor)
@@ -543,8 +549,26 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         if value is None:
             return None
         return otRound(value)
+        
+    def applyToAllButtonCallback(self, sender):
+        acceptedValues = {'ulPosText', 'ulThicknessText', 'stPosText', 'stThicknessText'}
+        toApplyToAll = {}
+        for key, value in self.w.getItemValues().items():
+            if key in acceptedValues and value != None:
+                toApplyToAll.update({key: value})
+        for font in self.fonts:
+            fontIdentifier = self.getFontIdentifier(font)
+            if 'ulPosText' in toApplyToAll.keys(): 
+                self.underlinePosition[fontIdentifier] = toApplyToAll['ulPosText']
+            if 'ulThicknessText' in toApplyToAll.keys():
+                self.underlineThickness[fontIdentifier] = toApplyToAll['ulThicknessText']
+            if 'stPosText' in toApplyToAll.keys():
+                self.strikePosition[fontIdentifier] = toApplyToAll['stPosText']
+            if 'stThicknessText' in toApplyToAll.keys():
+                self.strikeThickness[fontIdentifier] = toApplyToAll['stThicknessText']
+        self.updatePreview()
 
-    def setAllButtonCallback(self, sender):
+    def writeAllButtonCallback(self, sender):
         """
         Uses the tool’s dictionary we"ve been building, and writes those values into the UFO files themselves.
         Each UFO will have its own corresponding values.
@@ -564,7 +588,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             font.lib["public.openTypePostUnderlinePosition"] = self.roundInteger(uP[fontIdentifier])
             font.info.openTypeOS2StrikeoutSize     = self.roundInteger(sT[fontIdentifier])
             font.info.openTypeOS2StrikeoutPosition = self.roundInteger(sP[fontIdentifier])
-        self.w.getItem("setAllLabel").show(True)
+        self.w.getItem("writeAllLabel").show(True)
 
 
 registerRoboFontSubscriber(UnderlineStrikethrough)
