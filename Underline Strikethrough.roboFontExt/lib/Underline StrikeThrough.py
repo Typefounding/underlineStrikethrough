@@ -17,7 +17,7 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         * HorizontalStack
         
         > * VerticalStack
-        >> |-----|                  @table
+        >> |-----|                        @table
         >> |     |
         >> |-----|
         >> (Apply Current Values to All)  @applyToAllButton
@@ -26,59 +26,59 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
 
         > * VerticalStack
 
-        >> * MerzView              @merzView
+        >> * MerzView                     @merzView
 
-        >> * HorizontalStack       @textArea
-        >>> [_ _]                  @testText
-        >>> * ColorWell            @colorWell
+        >> * HorizontalStack              @textArea
+        >>> [_ _]                         @testText
+        >>> * ColorWell                   @colorWell
 
         >> ---
 
         >> * HorizontalStack
 
-        >>> !!!!! Underline        @ulLabel
+        >>> !!!!! Underline               @ulLabel
 
         >>> * VerticalStack
 
-        >>>> * TwoColumnForm       @underlineForm
+        >>>> * TwoColumnForm              @underlineForm
 
         >>>>> : Thickness:
         >>>>> * HorizontalStack
-        >>>>>> [_ _]               @ulThicknessText
-        >>>>>> (Sync)              @syncThickULButton
+        >>>>>> [_ _]                      @ulThicknessText
+        >>>>>> (Sync)                     @syncThickULButton
 
         >>>>> ---
 
         >>>>> : Position:
-        >>>>> [_ _]                @ulPosText
-        >>>>> (Descender)          @ulDescButton
-        >>>>> (Below Descender)    @ulBelowDescButton
+        >>>>> [_ _]                       @ulPosText
+        >>>>> (Descender)                 @ulDescButton
+        >>>>> (Below Descender)           @ulBelowDescButton
 
         >>> ---
 
-        >>> !!!!! Strikethrough    @stLabel
+        >>> !!!!! Strikethrough           @stLabel
 
         >>> * VerticalStack
 
-        >>>> * TwoColumnForm       @strikeForm
+        >>>> * TwoColumnForm              @strikeForm
 
         >>>>> : Thickness:
         >>>>> * HorizontalStack
-        >>>>>> [_ _]               @stThicknessText
-        >>>>>> (Sync)              @syncThickSTButton
+        >>>>>> [_ _]                      @stThicknessText
+        >>>>>> (Sync)                     @syncThickSTButton
 
         >>>>> ---
 
         >>>>> : Position:
-        >>>>> [_ _]                @stPosText
-        >>>>> (Mid Cap-Height)     @stMidCapButton
-        >>>>> (Mid X-Height)       @stMidXButton
+        >>>>> [_ _]                       @stPosText
+        >>>>> (Mid Cap-Height)            @stMidCapButton
+        >>>>> (Mid X-Height)              @stMidXButton
 
         ---
         """
         footer = """
         !- All values have been written into their respective UFOs.  @writeAllLabel 
-        (Write All Values)               @writeAllButton
+        (Write All Values)                @writeAllButton
         """
 
         tableWidth  = 225
@@ -551,6 +551,10 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
         return otRound(value)
         
     def applyToAllButtonCallback(self, sender):
+        """
+        Looks at all of the values currently on display (in common among selected fonts),
+        and applies them to all of the fonts in the list. Note: not writter to UFOs yet.
+        """
         acceptedValues = {'ulPosText', 'ulThicknessText', 'stPosText', 'stThicknessText'}
         toApplyToAll = {}
         for key, value in self.w.getItemValues().items():
