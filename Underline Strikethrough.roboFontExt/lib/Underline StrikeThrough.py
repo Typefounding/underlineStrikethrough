@@ -526,21 +526,23 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
                     glyphLayer.setPath(glyphPath)
                     cursor += glyph.width
 
-                if self.underlinePosition[fontIdentifier] and self.underlineThickness[fontIdentifier]:
-                    underlineLine = self.container.appendLineSublayer(
-                        startPoint=(margin, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
-                        endPoint=(cursor, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
-                        strokeWidth=self.underlineThickness[fontIdentifier] * viewScale,
-                        strokeColor=self.localStrokeColor
-                    )
+                if fontIdentifier in self.underlinePosition.keys() and self.underlinePosition[fontIdentifier] != None:
+                    if fontIdentifier in self.underlineThickness.keys() and self.underlineThickness[fontIdentifier] != None:
+                        underlineLine = self.container.appendLineSublayer(
+                            startPoint=(margin, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
+                            endPoint=(cursor, baseline + self.underlinePosition[fontIdentifier] - self.underlineThickness[fontIdentifier] / 2),
+                            strokeWidth=self.underlineThickness[fontIdentifier] * viewScale,
+                            strokeColor=self.localStrokeColor
+                        )
 
-                if self.strikePosition[fontIdentifier] and self.strikeThickness[fontIdentifier]:
-                    strikethroughLine = self.container.appendLineSublayer(
-                        startPoint=(margin, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
-                        endPoint=(cursor, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
-                        strokeWidth=self.strikeThickness[fontIdentifier] * viewScale,
-                        strokeColor=self.localStrokeColor
-                    )
+                if fontIdentifier in self.strikePosition.keys() and self.strikePosition[fontIdentifier] != None:
+                    if fontIdentifier in self.strikeThickness.keys() and self.strikeThickness[fontIdentifier] != None:
+                        strikethroughLine = self.container.appendLineSublayer(
+                            startPoint=(margin, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
+                            endPoint=(cursor, baseline + self.strikePosition[fontIdentifier] - self.strikeThickness[fontIdentifier] / 2),
+                            strokeWidth=self.strikeThickness[fontIdentifier] * viewScale,
+                            strokeColor=self.localStrokeColor
+                        )
 
             self.container.addSublayerScaleTransformation(viewScale, name="scale", center=(0, merzH/2))
 

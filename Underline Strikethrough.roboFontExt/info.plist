@@ -26,9 +26,9 @@
 	<key>name</key>
 	<string>Underline Strikethrough</string>
 	<key>timeStamp</key>
-	<real>1702994538</real>
+	<real>1704945703</real>
 	<key>version</key>
-	<string>2.4</string>
+	<string>2.5</string>
 	<key>com.robofontmechanic.Mechanic</key>
 	<dict>
 	  <key>repositoryURL</key>
