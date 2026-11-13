@@ -114,12 +114,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             ulThicknessText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             ulPosText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             syncThickSTButton=dict(
                 width = syncWidth,
@@ -138,12 +138,12 @@ class UnderlineStrikethrough(Subscriber, ezui.WindowController):
             stThicknessText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             stPosText=dict(
                 valueType="integer",
                 valueWidth=fieldWidth,
-                # valueIncrement=1
+                valueIncrement=1
             ),
             ulLabel=dict(
                 width=headerWidth
