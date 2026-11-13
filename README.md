@@ -36,9 +36,12 @@ Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/post) for
 
 Read [here](https://learn.microsoft.com/en-us/typography/opentype/spec/os2) for more guidance on setting these values.
 
-### Set Values
-This will take all values entered in the extension and actually write them into all corresponding open UFOs.
+### Apply Current Values to All
+This will take all values currently visible in the text boxes (whatever is in common among selected fonts) and apply them to the rest of the fonts in the font list.
 *Note: this will not write the values into the font yet. This is just a quick operation for your convenience.*
+
+### Write All Values
+This will take all values entered in the extension and actually write them into all corresponding open UFOs.
 
 #### Authors
 Started by Ben Kiel in 2014. Ryan Bugden ([@ryanbugden](https://github.com/ryanbugden)) did a bunch of work updating and improving it in 2023.
